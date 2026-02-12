@@ -1,57 +1,79 @@
-#1.	Create a database named dbemp and switch to it.
-create database dbemp;
-use dbemp;
-#2.	Create an employee table with appropriate data types 
-#and constraints for employee details.
-create table employee(
-		EmployeeID varchar(20) NOT NULL PRIMARY KEY,
-        FirstName varchar(20),
-        LastName varchar(20),
-        Gender char(1),
-        DateofBirth DATE,
-        Designation varchar(50),
-        DepartmentName varchar(20),
-        ManagerId varchar(20),
-        JoinedDate DATE,
-        Salary decimal(10,0)
+CREATE DATABASE IF NOT EXISTS testDB;
+USE testDB;
+
+CREATE TABLE IF NOT EXISTS Persons (
+    PersonID INT PRIMARY KEY,
+    LastName VARCHAR(255),
+    FirstName VARCHAR(255),
+    Address VARCHAR(255),
+    City VARCHAR(255)
 );
-#3.	Insert at least two employee records into the employee table.
-insert into employee (
-EmployeeID,FirstName,LastName,Gender,DateofBirth,Designation,
-DepartmentName,ManagerId,JoinedDate,Salary)
-values (
-'0009','Season','Maharjan','M','1996-04-02','Engineer',
-'Software Engineering', '0005','2022-04-02','5000000'
-),(
-'0010','Ramesh','Rai','M','2000-04-02','Manager',
-'Software Engineering', '0003','2022-04-02','1000000'
+
+INSERT INTO Persons (PersonID, LastName, FirstName, Address, City)
+VALUES 
+("1", 'Sharma', 'Ram', 'Kathmandu-01', 'Kathmandu'),
+("2", 'Bajracharya', 'Uppashana', 'Lalitpur-05', 'Lalitpur'),
+("3", 'Shrestha', 'Sita', 'Bhaktapur-03', 'Bhaktapur');
+
+select * from Persons;
+
+UPDATE Persons
+SET City = 'Pokhara'
+WHERE PersonID = 1;
+
+DELETE FROM Persons
+WHERE PersonID = 3;
+
+
+ALTER TABLE Persons
+ADD Email VARCHAR(255);
+
+select * from Persons;
+
+SELECT COUNT(DISTINCT City) FROM Persons;
+
+SELECT *
+FROM Persons
+WHERE City = 'Kathmandu' AND FirstName LIKE 'G%';
+
+SELECT *
+FROM Persons
+WHERE City = 'Kathmandu' OR City = 'Lalitpur';
+
+SELECT * FROM Persons
+WHERE NOT City = 'Kathmandu';
+
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    PersonID INT,
+    Product VARCHAR(255),
+    Amount INT,
+    FOREIGN KEY (PersonID) REFERENCES Persons(PersonID)
 );
-select * from employee;
-use dbemp;
-update employee 
-set Gender ='M'
-where EmployeeID='003';
-select Firstname, curdate() as CurrentDate,
-DateofBirth,
-timestampdiff(YEAR, DateofBirth,CURDATE())as Age 
-from employee where timestampdiff(YEAR,DateofBirth,CURDATE()) >25;
-select *
-FROM employee
-WHERE DateofBirth = (SELECT MIN(DateofBirth) FROM employee);
-select *
-FROM employee
-WHERE DateofBirth = (SELECT MAX(DateofBirth) FROM employee);
-select DepartmentName, MAX(Salary) as Maxsalary
-FROM employee group by DepartmentName;
-select * from employee;
-select FirstName from employee where
-EmployeeID in (select ManagerID FROM employee);
-select * from employee
-where JoinedDate=(select Max(JoinedDate) from employee);
+
+INSERT INTO Orders (OrderID, PersonID, Product, Amount)
+VALUES
+(101, 1, 'Laptop', 80000),
+(102, 2, 'Mobile', 30000),
+(103, 1, 'Headphones', 5000);
+
+SELECT Persons.FirstName, Persons.City, Orders.Product, Orders.Amount
+FROM Persons
+INNER JOIN Orders
+ON Persons.PersonID = Orders.PersonID;
+
+SELECT Persons.FirstName, Orders.Product
+FROM Persons
+LEFT JOIN Orders
+ON Persons.PersonID = Orders.PersonID;
+
+SELECT Persons.FirstName, Orders.Product
+FROM Persons
+RIGHT JOIN Orders
+ON Persons.PersonID = Orders.PersonID;
 
 
-
-
+ 
 
 
 
